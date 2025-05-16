@@ -2,8 +2,8 @@ import { api, APIError } from "encore.dev/api";
 import { SQLDatabase } from "encore.dev/storage/sqldb";
 import { randomBytes } from "node:crypto";
 
-// Use the centralized 'auth' database instead of a separate 'url' database
-const db = new SQLDatabase("auth");
+// Sử dụng database riêng cho service url thay vì sử dụng database auth
+const db = new SQLDatabase("url_db");
 
 interface URL {
   id: string; // short-form URL id
