@@ -10,8 +10,9 @@ import {
 } from "./users";
 import { SQLDatabase } from "encore.dev/storage/sqldb";
 
-// Create test database connection
-const db = new SQLDatabase("users", { migrations: "./migrations" });
+// Create test database connections
+const authDb = new SQLDatabase("auth", { migrations: "./migrations" });
+const usersDb = new SQLDatabase("users", { migrations: "./migrations" });
 
 describe("Users Service Tests", () => {
   const testUser = {
@@ -24,10 +25,37 @@ describe("Users Service Tests", () => {
   
   let userId = "";
   
+  // Setup before tests
+  beforeAll(async () => {
+    try {
+      // Trong Encore, migrations được chạy tự động khi service khởi động
+      // Thay vì gọi migrate(), chúng ta sẽ thực hiện thao tác cơ sở dữ liệu 
+      // để kiểm tra xem bảng users đã tồn tại chưa
+      
+      // Kiểm tra xem bảng users có tồn tại không
+      try {
+        // Thử truy vấn một dòng từ bảng users để kiểm tra bảng có tồn tại không
+        await authDb.queryRow`SELECT COUNT(*) FROM users LIMIT 1`;
+        
+        // Xóa user test cũ nếu tồn tại
+        await authDb.exec`DELETE FROM users WHERE email = ${testUser.email}`;
+      } catch (error) {
+        console.error("Table check error:", error);
+        // Bảng có thể chưa tồn tại hoặc có lỗi khác - bỏ qua và để Encore tự xử lý
+      }
+    } catch (error) {
+      console.error("Setup error:", error);
+    }
+  });
+  
   // Cleanup after tests
   afterAll(async () => {
     if (userId) {
-      await db.exec`DELETE FROM users WHERE id = ${userId}`;
+      try {
+        await authDb.exec`DELETE FROM users WHERE id = ${userId}`;
+      } catch (error) {
+        console.error("Cleanup error:", error);
+      }
     }
   });
   
