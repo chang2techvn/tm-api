@@ -3,12 +3,11 @@
 
 import { api, APIError } from "encore.dev/api";
 import { SQLDatabase } from "encore.dev/storage/sqldb";
-import { syncAllUsersToCache } from "../users/users"; // Import API endpoint
 
 import { TaskStatus } from "../tasks/tasks";
 
-// Define the database connection for the projects service
-const db = new SQLDatabase("projects", { migrations: "./migrations" });
+// Kết nối đến database của service auth thay vì sử dụng database local
+const db = new SQLDatabase("auth", { migrations: "../auth/migrations" });
 
 // Types for our API responses and requests
 interface ProjectBasic {

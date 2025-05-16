@@ -3,7 +3,8 @@ import { SQLDatabase } from "encore.dev/storage/sqldb";
 import { TaskStatus } from "../tasks/tasks";
 
 // Define the database connection for the users service
-const db = new SQLDatabase("users", { migrations: "./migrations" });
+// Kết nối đến database của service auth thay vì sử dụng database local
+const db = new SQLDatabase("auth", { migrations: "../auth/migrations" });
 
 // Types for our API responses and requests
 interface UserBasic {

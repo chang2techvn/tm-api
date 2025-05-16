@@ -1,8 +1,8 @@
 import { api, APIError } from "encore.dev/api";
 import { SQLDatabase } from "encore.dev/storage/sqldb";
 
-// Define the database connection for the tasks service
-const db = new SQLDatabase("tasks", { migrations: "./migrations" });
+// Kết nối đến database của service auth thay vì sử dụng database local
+const db = new SQLDatabase("auth", { migrations: "../auth/migrations" });
 
 // Define our own TaskStatus enum instead of importing from Prisma
 export enum TaskStatus {
