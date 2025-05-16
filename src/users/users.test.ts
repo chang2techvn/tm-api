@@ -11,8 +11,8 @@ import {
 import { hashPassword } from "../utils/auth";
 import { SQLDatabase } from "encore.dev/storage/sqldb";
 
-// Sử dụng database từ service auth, vì migration tập trung nằm ở đó
-const authDb = new SQLDatabase("auth", { migrations: "./migrations" });
+// Sử dụng database từ service auth, nhưng không tự quản lý migration
+const authDb = new SQLDatabase("auth");
 
 describe("Users Service Tests", () => {
   // Skip all tests due to database setup issues

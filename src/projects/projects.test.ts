@@ -12,9 +12,9 @@ import {
 } from "./projects";
 import { SQLDatabase } from "encore.dev/storage/sqldb";
 
-// Create test database connections
-const authDb = new SQLDatabase("auth", { migrations: "./migrations" });
-const projectsDb = new SQLDatabase("projects", { migrations: "./migrations" });
+// Create test database connections without migration config
+const authDb = new SQLDatabase("auth");
+const projectsDb = new SQLDatabase("projects");
 
 describe("Projects Service Tests", () => {
   const testProject = {
