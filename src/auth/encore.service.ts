@@ -1,8 +1,8 @@
 import { Service } from "encore.dev/service";
 import { extractTokenFromHeader, verifyToken } from '../utils/auth';
 
-// Define Service
-export default new Service("auth-middleware");
+// This service provides authentication-related functionality
+export default new Service("auth");
 
 // Interface for authentication context
 interface AuthContext {

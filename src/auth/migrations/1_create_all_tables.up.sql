@@ -2,6 +2,17 @@
 -- Thêm extension UUID nếu chưa có
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+-- 1. Drop all tables first if they exist to ensure clean migration
+-- We use DROP IF EXISTS to avoid errors if tables don't exist
+DROP TABLE IF EXISTS tasks CASCADE;
+DROP TABLE IF EXISTS project_members CASCADE;
+DROP TABLE IF EXISTS projects CASCADE;
+DROP TABLE IF EXISTS url CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+DROP VIEW IF EXISTS user_view CASCADE;
+
+-- Now recreate all tables from scratch
+
 -- 1. Tạo bảng users (từ auth service)
 CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -53,27 +64,45 @@ CREATE TABLE IF NOT EXISTS url (
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 
--- 6. Thêm các khóa ngoại
+-- 6. Thêm các khóa ngoại, chỉ thêm nếu chưa tồn tại
+DO $$ 
+BEGIN
+    -- Thêm khóa ngoại cho bảng project_members
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint WHERE conname = 'fk_project_members_user'
+    ) THEN
+        ALTER TABLE project_members
+        ADD CONSTRAINT fk_project_members_user
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+    END IF;
 
--- Thêm khóa ngoại cho bảng project_members
-ALTER TABLE project_members
-ADD CONSTRAINT fk_project_members_user
-FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint WHERE conname = 'fk_project_members_project'
+    ) THEN
+        ALTER TABLE project_members
+        ADD CONSTRAINT fk_project_members_project
+        FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE;
+    END IF;
 
-ALTER TABLE project_members
-ADD CONSTRAINT fk_project_members_project
-FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE;
+    -- Thêm khóa ngoại cho bảng tasks
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint WHERE conname = 'fk_tasks_users'
+    ) THEN
+        ALTER TABLE tasks 
+        ADD CONSTRAINT fk_tasks_users
+        FOREIGN KEY (assignee_id) REFERENCES users(id) ON DELETE SET NULL;
+    END IF;
 
--- Thêm khóa ngoại cho bảng tasks
-ALTER TABLE tasks 
-ADD CONSTRAINT fk_tasks_users
-FOREIGN KEY (assignee_id) REFERENCES users(id) ON DELETE SET NULL;
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint WHERE conname = 'fk_tasks_projects'
+    ) THEN
+        ALTER TABLE tasks 
+        ADD CONSTRAINT fk_tasks_projects
+        FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE;
+    END IF;
+END $$;
 
-ALTER TABLE tasks 
-ADD CONSTRAINT fk_tasks_projects
-FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE;
-
--- 7. Tạo view user_view cho service users
+-- 7. Tạo view user_view cho service users nếu chưa tồn tại
 CREATE OR REPLACE VIEW user_view AS
 SELECT id, name, email, role, avatar, skills, created_at, updated_at
 FROM users;

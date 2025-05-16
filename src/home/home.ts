@@ -9,6 +9,7 @@ interface HomeResponse {
 }
 
 // Home endpoint provides basic information about the management API
+// Changed the path from "/" to "/api" to avoid conflict with URL service
 export const getHome = api(
   { expose: true, method: "GET", path: "/api" },
   async (): Promise<HomeResponse> => {
