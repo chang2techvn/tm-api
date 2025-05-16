@@ -14,7 +14,7 @@ export const getHome = api(
   { expose: true, method: "GET", path: "/api" },
   async (): Promise<HomeResponse> => {
     return {
-      title: "Management Task API",
+      title: "Management API",
       version: "1.0.0",
       description: "API for managing users, projects, and tasks",
       availableServices: ["auth", "users", "projects", "tasks"]
