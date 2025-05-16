@@ -1,5 +1,8 @@
+-- Thêm extension UUID nếu chưa có
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 CREATE TABLE projects (
-    id TEXT PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name TEXT NOT NULL,
     description TEXT,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
@@ -7,9 +10,9 @@ CREATE TABLE projects (
 );
 
 CREATE TABLE project_members (
-    id TEXT PRIMARY KEY,
-    user_id TEXT NOT NULL,
-    project_id TEXT NOT NULL,
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID NOT NULL,
+    project_id UUID NOT NULL,
     joined_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     UNIQUE (user_id, project_id)
 );

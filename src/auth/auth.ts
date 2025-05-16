@@ -130,24 +130,15 @@ export const signup = api(
     // Hash the password before saving
     const hashedPassword = await hashPassword(request.password);
 
-    // Create the new user with hashed password
-    const userId = await db.queryRow`
+    // Create the new user with hashed password - UUID sẽ được tự động tạo bởi PostgreSQL
+    const newUser = await db.queryRow`
       INSERT INTO users (name, email, password, role, skills)
       VALUES (${request.name}, ${request.email}, ${hashedPassword}, ${request.role}, '[]')
-      RETURNING id
-    `;
-
-    if (!userId) {
-      throw APIError.internal("Failed to create user");
-    }
-
-    // Retrieve the created user
-    const newUser = await db.queryRow`
-      SELECT * FROM users WHERE id = ${userId.id}
+      RETURNING *
     `;
 
     if (!newUser) {
-      throw APIError.internal("Failed to retrieve created user");
+      throw APIError.internal("Failed to create user");
     }
 
     // Generate tokens

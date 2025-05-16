@@ -154,11 +154,11 @@ export const createUser = api(
       throw APIError.invalidArgument("Email is already in use");
     }
     
-    // Create the new user
+    // Create the new user - UUID sẽ được tự động tạo bởi PostgreSQL
     const newUser = await db.queryRow`
       INSERT INTO users (name, email, password, role, skills)
       VALUES (${request.name}, ${request.email}, ${request.password}, ${request.role}, ${JSON.stringify(request.skills)})
-      RETURNING id, name, email, role, avatar, skills
+      RETURNING *
     `;
 
     if (!newUser) {

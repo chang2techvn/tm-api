@@ -1,12 +1,15 @@
+-- Thêm extension UUID nếu chưa có
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 -- Create the tasks table without foreign key constraints first
 CREATE TABLE tasks (
-    id TEXT PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     title TEXT NOT NULL,
     description TEXT,
     status TEXT NOT NULL,
-    assignee_id TEXT,
+    assignee_id UUID,
     due_date TIMESTAMP WITH TIME ZONE,
-    project_id TEXT NOT NULL,
+    project_id UUID NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
