@@ -1,5 +1,9 @@
+// projects.ts - Updated version to work with cache sync API
+// Timestamp: 2024-05-16
+
 import { api, APIError } from "encore.dev/api";
 import { SQLDatabase } from "encore.dev/storage/sqldb";
+import { syncAllUsersToCache } from "../users/users"; // Import API endpoint
 
 import { TaskStatus } from "../tasks/tasks";
 
@@ -74,6 +78,10 @@ interface MemberList {
 export const getAllProjects = api(
   { expose: true, method: "GET", path: "/api/projects" },
   async (): Promise<ProjectList> => {
+    // Example of using syncAllUsersToCache API without passing db
+    // Uncomment if you need to sync users before getting projects
+    // await syncAllUsersToCache();
+    
     // Get projects
     const projectsQuery = db.query`
       SELECT * FROM projects

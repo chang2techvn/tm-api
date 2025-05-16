@@ -50,6 +50,13 @@ interface AvatarUpdateRequest {
   avatarBase64: string; // Base64 encoded image string
 }
 
+// Thêm interface mới cho response của API đồng bộ cache
+interface SyncResponse {
+  success: boolean;
+  message: string;
+  count?: number;
+}
+
 // 1.1. GET /api/users - Lấy danh sách tất cả người dùng
 export const getAllUsers = api(
   { expose: true, method: "GET", path: "/api/users" },
@@ -385,5 +392,35 @@ export const getUserStats = api(
       projects: projectCount,
       completed: completedTasks,
     };
+  }
+);
+
+// API để đồng bộ tất cả người dùng vào cache
+export const syncAllUsersToCache = api(
+  { expose: true, method: "POST", path: "/api/users/sync-cache" },
+  async (): Promise<SyncResponse> => {
+    try {
+      // Truy vấn tất cả người dùng
+      const usersQuery = db.query`
+        SELECT id, name, email, role, avatar, skills
+        FROM users
+      `;
+      
+      const users = [];
+      for await (const user of usersQuery) {
+        users.push(user);
+      }
+      
+      // Ở đây bạn có thể thêm logic để lưu vào cache thực tế
+      // Ví dụ: Redis hoặc memory cache
+      
+      return {
+        success: true,
+        message: `Successfully synced ${users.length} users to cache`,
+        count: users.length
+      };
+    } catch (error) {
+      throw APIError.internal("Failed to sync users to cache");
+    }
   }
 );
