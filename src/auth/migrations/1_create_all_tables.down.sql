@@ -9,8 +9,11 @@ DROP TABLE IF EXISTS tasks;
 -- 3. Drop bảng project_members (phụ thuộc vào users và projects)
 DROP TABLE IF EXISTS project_members;
 
--- 4. Drop bảng projects
+-- 4. Drop bảng url
+DROP TABLE IF EXISTS url;
+
+-- 5. Drop bảng projects
 DROP TABLE IF EXISTS projects;
 
--- 5. Drop bảng users
+-- 6. Drop bảng users
 DROP TABLE IF EXISTS users;

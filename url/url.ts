@@ -2,8 +2,8 @@ import { api, APIError } from "encore.dev/api";
 import { SQLDatabase } from "encore.dev/storage/sqldb";
 import { randomBytes } from "node:crypto";
 
-// 'url' database is used to store the URLs that are being shortened.
-const db = new SQLDatabase("url", { migrations: "./migrations" });
+// Use the centralized 'auth' database instead of a separate 'url' database
+const db = new SQLDatabase("auth");
 
 interface URL {
   id: string; // short-form URL id

@@ -46,7 +46,14 @@ CREATE TABLE IF NOT EXISTS tasks (
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 
--- 5. Thêm các khóa ngoại
+-- 5. Tạo bảng url (từ url service)
+CREATE TABLE IF NOT EXISTS url (
+    id TEXT PRIMARY KEY,
+    original_url TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+);
+
+-- 6. Thêm các khóa ngoại
 
 -- Thêm khóa ngoại cho bảng project_members
 ALTER TABLE project_members
@@ -66,7 +73,7 @@ ALTER TABLE tasks
 ADD CONSTRAINT fk_tasks_projects
 FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE;
 
--- 6. Tạo view user_view cho service users
+-- 7. Tạo view user_view cho service users
 CREATE OR REPLACE VIEW user_view AS
 SELECT id, name, email, role, avatar, skills, created_at, updated_at
 FROM users;
