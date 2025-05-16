@@ -14,7 +14,11 @@
     "vitest": "^2.1.4"
   },
   "dependencies": {
-    "encore.dev": "^1.46.22"
+    "@types/bcrypt": "^5.0.2",
+    "@types/jsonwebtoken": "^9.0.9",
+    "bcrypt": "^6.0.0",
+    "encore.dev": "^1.46.22",
+    "jsonwebtoken": "^9.0.2"
   },
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "^4.13.0"
