@@ -13,8 +13,8 @@ import {
 import { SQLDatabase } from "encore.dev/storage/sqldb";
 
 // Create test database connections without migration config
-const authDb = new SQLDatabase("biwoco_management_db");
-const projectsDb = new SQLDatabase("projects");
+const authDb = new SQLDatabase("biwoco_auth_db");
+const projectsDb = new SQLDatabase("biwoco_projects_db");
 
 describe("Projects Service Tests", () => {
   const testProject = {

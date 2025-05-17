@@ -1,8 +1,8 @@
 import { api, APIError } from "encore.dev/api";
 import { SQLDatabase } from "encore.dev/storage/sqldb";
 
-// Kết nối đến database với tên mới
-const db = new SQLDatabase("biwoco_management_db");
+// Kết nối đến database với tên mới cho service tasks
+const db = new SQLDatabase("biwoco_tasks_db");
 
 // Define our own TaskStatus enum instead of importing from Prisma
 export enum TaskStatus {

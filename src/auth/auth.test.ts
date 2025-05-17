@@ -3,7 +3,7 @@ import { login, signup, getCurrentUser, refreshToken, logout } from "./auth";
 import { SQLDatabase } from "encore.dev/storage/sqldb";
 
 // Create a test database connection
-const db = new SQLDatabase("biwoco_management_db");
+const db = new SQLDatabase("biwoco_auth_db");
 
 describe("Authentication Tests", () => {
   const testUser = {
