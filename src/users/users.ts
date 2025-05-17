@@ -3,8 +3,8 @@ import { SQLDatabase } from "encore.dev/storage/sqldb";
 import { TaskStatus } from "../tasks/tasks";
 
 // Define the database connection for the users service
-// Sử dụng database riêng biệt cho service users
-const db = new SQLDatabase("biwoco_users_db");
+// Sử dụng database chung với tên mới cho tất cả các service
+const db = new SQLDatabase("biwoco_app_db");
 
 // Types for our API responses and requests
 interface UserBasic {

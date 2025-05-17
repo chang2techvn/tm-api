@@ -12,8 +12,8 @@ import {
 import { TaskStatus } from "../tasks/tasks";
 
 // Define the database connection for the auth service
-// Chỉ giữ lại migration trong service auth
-const db = new SQLDatabase("biwoco_auth_db", { migrations: "./migrations" });
+// Sử dụng một database duy nhất với tên mới để tránh xung đột template
+const db = new SQLDatabase("biwoco_app_db", { migrations: "./migrations" });
 
 // Types for our API
 interface AuthUser {
