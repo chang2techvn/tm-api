@@ -11,8 +11,8 @@ import {
 import { hashPassword } from "../utils/auth";
 import { SQLDatabase } from "encore.dev/storage/sqldb";
 
-// Sử dụng database từ service auth, nhưng không tự quản lý migration
-const authDb = new SQLDatabase("project_management");
+// Sử dụng database với tên mới
+const authDb = new SQLDatabase("biwoco_management_db");
 
 describe("Users Service Tests", () => {
   // Skip all tests due to database setup issues

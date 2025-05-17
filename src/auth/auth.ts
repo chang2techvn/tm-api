@@ -13,7 +13,7 @@ import { TaskStatus } from "../tasks/tasks";
 
 // Define the database connection for the auth service
 // Chỉ giữ lại migration trong service auth
-const db = new SQLDatabase("project_management", { migrations: "./migrations" });
+const db = new SQLDatabase("biwoco_management_db", { migrations: "./migrations" });
 
 // Types for our API
 interface AuthUser {

@@ -6,8 +6,8 @@ import { SQLDatabase } from "encore.dev/storage/sqldb";
 
 import { TaskStatus } from "../tasks/tasks";
 
-// Kết nối đến database của service auth
-const db = new SQLDatabase("project_management");
+// Kết nối đến database với tên mới
+const db = new SQLDatabase("biwoco_management_db");
 
 // Types for our API responses and requests
 interface ProjectBasic {
