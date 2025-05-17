@@ -2,7 +2,7 @@ import { api, APIError } from "encore.dev/api";
 import { SQLDatabase } from "encore.dev/storage/sqldb";
 
 // Kết nối đến database của service auth
-const db = new SQLDatabase("auth");
+const db = new SQLDatabase("project_management");
 
 // Define our own TaskStatus enum instead of importing from Prisma
 export enum TaskStatus {

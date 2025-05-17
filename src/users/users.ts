@@ -3,8 +3,8 @@ import { SQLDatabase } from "encore.dev/storage/sqldb";
 import { TaskStatus } from "../tasks/tasks";
 
 // Define the database connection for the users service
-// Use the 'auth' database for centralized schema management
-const db = new SQLDatabase("auth");
+// Use the 'project_management' database for centralized schema management
+const db = new SQLDatabase("project_management");
 
 // Types for our API responses and requests
 interface UserBasic {
