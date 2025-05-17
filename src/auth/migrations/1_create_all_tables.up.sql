@@ -2,16 +2,8 @@
 -- Thêm extension UUID nếu chưa có
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- 1. Drop all tables first if they exist to ensure clean migration
--- We use DROP IF EXISTS to avoid errors if tables don't exist
-DROP TABLE IF EXISTS tasks CASCADE;
-DROP TABLE IF EXISTS project_members CASCADE;
-DROP TABLE IF EXISTS projects CASCADE;
-DROP TABLE IF EXISTS url CASCADE;
-DROP TABLE IF EXISTS users CASCADE;
-DROP VIEW IF EXISTS user_view CASCADE;
-
--- Now recreate all tables from scratch
+-- Bỏ qua phần drop tables để sử dụng template hiện có
+-- Chỉ tạo các bảng nếu chưa tồn tại
 
 -- 1. Tạo bảng users (từ auth service)
 CREATE TABLE IF NOT EXISTS users (
@@ -57,7 +49,7 @@ CREATE TABLE IF NOT EXISTS tasks (
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 
--- 5. Tạo bảng url (từ url service)
+-- Thêm bảng url nếu chưa tồn tại
 CREATE TABLE IF NOT EXISTS url (
     id TEXT PRIMARY KEY,
     original_url TEXT NOT NULL,

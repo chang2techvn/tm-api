@@ -12,6 +12,7 @@ import {
 import { TaskStatus } from "../tasks/tasks";
 
 // Define the database connection for the auth service
+// Chỉ giữ lại migration trong service auth
 const db = new SQLDatabase("auth", { migrations: "./migrations" });
 
 // Types for our API
