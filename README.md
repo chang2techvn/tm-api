@@ -1,119 +1,766 @@
-# URL Shortener Starter
+# Project Management API
 
-This is an Encore starter for a URL Shortener. It has two API endpoints and a PostgreSQL database to store the URL IDs 
-and retrieve the full URL given an ID.
+This is a REST API for a project management system deployed on Encore Cloud. The API provides endpoints for user management, project management, task management, and authentication.
 
-## Build from scratch with a tutorial
+## API Base URL
 
-If you prefer to built it yourself, check out the [tutorial](https://encore.dev/docs/ts/tutorials/rest-api) to learn how to build this application from scratch.
+The API is deployed at: `https://prod-management-api-2zoi.encr.app`
 
-## Prerequisites 
+## API Documentation
 
-**Install Encore:**
-- **macOS:** `brew install encoredev/tap/encore`
-- **Linux:** `curl -L https://encore.dev/install.sh | bash`
-- **Windows:** `iwr https://encore.dev/install.ps1 | iex`
-  
-**Docker:**
-1. [Install Docker](https://docker.com)
-2. Start Docker
+### Authentication APIs
 
-## Create app
+#### 1. User Registration (Signup)
 
-Create a local app from this template:
+- **Endpoint**: `POST /api/auth/signup`
+- **Description**: Register a new user
+- **Request Body**:
+  ```json
+  {
+    "email": "user@example.com",
+    "password": "password123",
+    "name": "User Name",
+    "role": "user"
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "token": "JWT_TOKEN",
+    "refreshToken": "REFRESH_TOKEN",
+    "expiresAt": "2025-05-19T10:12:00.525Z",
+    "user": {
+      "id": "USER_ID",
+      "email": "user@example.com",
+      "name": "User Name",
+      "role": "user"
+    }
+  }
+  ```
 
-```bash
-encore app create my-app-name --example=ts/url-shortener
+#### 2. User Login
+
+- **Endpoint**: `POST /api/auth/login`
+- **Description**: Login an existing user
+- **Request Body**:
+  ```json
+  {
+    "email": "user@example.com",
+    "password": "password123"
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "token": "JWT_TOKEN",
+    "refreshToken": "REFRESH_TOKEN",
+    "expiresAt": "2025-05-19T10:12:10.019Z",
+    "user": {
+      "id": "USER_ID",
+      "email": "user@example.com",
+      "name": "User Name",
+      "role": "user"
+    }
+  }
+  ```
+
+#### 3. Get Current User
+
+- **Endpoint**: `GET /api/auth/me?userId=USER_ID`
+- **Description**: Get the current authenticated user's profile
+- **Headers**: `Authorization: Bearer JWT_TOKEN`
+- **Query Parameters**: `userId` - The ID of the current user
+- **Response**:
+  ```json
+  {
+    "id": "USER_ID",
+    "email": "user@example.com",
+    "name": "User Name",
+    "role": "user",
+    "skills": [],
+    "avatar": null,
+    "stats": {
+      "projects": 0,
+      "tasks": 0,
+      "completed": 0
+    }
+  }
+  ```
+
+### User Management APIs
+
+#### 1. Get All Users
+
+- **Endpoint**: `GET /api/users`
+- **Description**: Get a list of all users
+- **Headers**: `Authorization: Bearer JWT_TOKEN`
+- **Response**:
+  ```json
+  {
+    "users": [
+      {
+        "id": "USER_ID",
+        "name": "User Name",
+        "role": "user",
+        "skills": [],
+        "avatar": null
+      }
+    ]
+  }
+  ```
+
+#### 2. Get User by ID
+
+- **Endpoint**: `GET /api/users/:id`
+- **Description**: Get details for a specific user
+- **Headers**: `Authorization: Bearer JWT_TOKEN`
+- **Response**:
+  ```json
+  {
+    "id": "USER_ID",
+    "name": "User Name",
+    "email": "user@example.com",
+    "role": "user",
+    "skills": [],
+    "avatar": null,
+    "stats": {
+      "projects": 0,
+      "tasks": 0,
+      "completed": 0
+    }
+  }
+  ```
+
+#### 3. Create User
+
+- **Endpoint**: `POST /api/users`
+- **Description**: Create a new user (Admin function)
+- **Headers**: `Authorization: Bearer JWT_TOKEN`
+- **Request Body**:
+  ```json
+  {
+    "email": "user@example.com",
+    "password": "password123",
+    "name": "User Name",
+    "role": "user"
+  }
+  ```
+- **Response**: Same as User Registration
+
+#### 4. Update User
+
+- **Endpoint**: `PUT /api/users/:id`
+- **Description**: Update user information
+- **Headers**: `Authorization: Bearer JWT_TOKEN`
+- **Request Body**:
+  ```json
+  {
+    "name": "Updated User Name",
+    "email": "user@example.com",
+    "role": "user"
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "id": "USER_ID",
+    "name": "Updated User Name",
+    "email": "user@example.com",
+    "role": "user",
+    "skills": [],
+    "avatar": null,
+    "stats": {
+      "projects": 0,
+      "tasks": 0,
+      "completed": 0
+    }
+  }
+  ```
+
+#### 5. Update User Skills
+
+- **Endpoint**: `PATCH /api/users/:id/skills`
+- **Description**: Update the skills of a user
+- **Headers**: `Authorization: Bearer JWT_TOKEN`
+- **Request Body**:
+  ```json
+  {
+    "skills": ["JavaScript", "React", "TypeScript"]
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "id": "USER_ID",
+    "name": "User Name",
+    "skills": "[\"JavaScript\",\"React\",\"TypeScript\"]"
+  }
+  ```
+
+#### 6. Update User Avatar
+
+- **Endpoint**: `PATCH /api/users/:id/avatar`
+- **Description**: Update the avatar of a user
+- **Headers**: `Authorization: Bearer JWT_TOKEN`
+- **Request Body**:
+  ```json
+  {
+    "avatarBase64": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "id": "USER_ID",
+    "avatar": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="
+  }
+  ```
+
+#### 7. Get User Stats
+
+- **Endpoint**: `GET /api/users/:id/stats`
+- **Description**: Get statistics for a user
+- **Headers**: `Authorization: Bearer JWT_TOKEN`
+- **Response**:
+  ```json
+  {
+    "projects": 0,
+    "tasks": 0,
+    "completed": 0
+  }
+  ```
+
+### Project Management APIs
+
+#### 1. Get All Projects
+
+- **Endpoint**: `GET /api/projects`
+- **Description**: Get a list of all projects
+- **Headers**: `Authorization: Bearer JWT_TOKEN`
+- **Response**:
+  ```json
+  {
+    "projects": [
+      {
+        "id": "PROJECT_ID",
+        "name": "Project Name",
+        "description": "Project Description",
+        "createdAt": "2025-05-18T10:16:12.023Z",
+        "members": [],
+        "taskCount": 0
+      }
+    ]
+  }
+  ```
+
+#### 2. Get Project by ID
+
+- **Endpoint**: `GET /api/projects/:id`
+- **Description**: Get details for a specific project
+- **Headers**: `Authorization: Bearer JWT_TOKEN`
+- **Response**:
+  ```json
+  {
+    "id": "PROJECT_ID",
+    "name": "Project Name",
+    "description": "Project Description",
+    "createdAt": "2025-05-18T10:16:12.023Z",
+    "members": [],
+    "taskCount": 0
+  }
+  ```
+
+#### 3. Create Project
+
+- **Endpoint**: `POST /api/projects`
+- **Description**: Create a new project
+- **Headers**: `Authorization: Bearer JWT_TOKEN`
+- **Request Body**:
+  ```json
+  {
+    "name": "Project Name",
+    "description": "Project Description",
+    "startDate": "2025-05-18T00:00:00.000Z",
+    "endDate": "2025-06-18T00:00:00.000Z"
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "id": "PROJECT_ID",
+    "name": "Project Name",
+    "description": "Project Description",
+    "createdAt": "2025-05-18T10:16:12.023Z",
+    "members": [],
+    "taskCount": 0
+  }
+  ```
+
+#### 4. Update Project
+
+- **Endpoint**: `PUT /api/projects/:id`
+- **Description**: Update project information
+- **Headers**: `Authorization: Bearer JWT_TOKEN`
+- **Request Body**:
+  ```json
+  {
+    "name": "Updated Project Name",
+    "description": "Updated Project Description",
+    "startDate": "2025-05-18T00:00:00.000Z",
+    "endDate": "2025-07-18T00:00:00.000Z"
+  }
+  ```
+- **Response**: Same as Get Project by ID, with updated values
+
+#### 5. Delete Project
+
+- **Endpoint**: `DELETE /api/projects/:id`
+- **Description**: Delete a project
+- **Headers**: `Authorization: Bearer JWT_TOKEN`
+- **Response**:
+  ```json
+  {
+    "message": "Project deleted successfully",
+    "success": true
+  }
+  ```
+
+#### 6. Get Project Tasks
+
+- **Endpoint**: `GET /api/projects/:id/tasks`
+- **Description**: Get all tasks for a specific project
+- **Headers**: `Authorization: Bearer JWT_TOKEN`
+- **Response**:
+  ```json
+  {
+    "tasks": [
+      {
+        "id": "TASK_ID",
+        "title": "Task Title",
+        "description": "Task Description",
+        "status": "TODO",
+        "dueDate": "2025-06-01T00:00:00Z",
+        "assignee": {
+          "id": "USER_ID",
+          "name": "User Name"
+        }
+      }
+    ]
+  }
+  ```
+
+#### 7. Get Project Members
+
+- **Endpoint**: `GET /api/projects/:id/members`
+- **Description**: Get all members of a specific project
+- **Headers**: `Authorization: Bearer JWT_TOKEN`
+- **Response**:
+  ```json
+  {
+    "members": [
+      {
+        "id": "USER_ID",
+        "name": "User Name",
+        "role": "user",
+        "avatar": "data:image/png;base64,..."
+      }
+    ]
+  }
+  ```
+
+#### 8. Add User to Project
+
+- **Endpoint**: `POST /api/projects/:id/members`
+- **Description**: Add a user to a project
+- **Headers**: `Authorization: Bearer JWT_TOKEN`
+- **Request Body**:
+  ```json
+  {
+    "userId": "USER_ID"
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "message": "User added to project",
+    "user": {
+      "id": "USER_ID",
+      "name": "User Name"
+    },
+    "success": true
+  }
+  ```
+
+#### 9. Remove User from Project
+
+- **Endpoint**: `DELETE /api/projects/:id/members/:userId`
+- **Description**: Remove a user from a project
+- **Headers**: `Authorization: Bearer JWT_TOKEN`
+- **Response**:
+  ```json
+  {
+    "message": "User removed from project",
+    "success": true
+  }
+  ```
+
+### Task Management APIs
+
+#### 1. Get All Tasks
+
+- **Endpoint**: `GET /api/tasks?projectId=PROJECT_ID`
+- **Description**: Get all tasks, optionally filtered by project
+- **Headers**: `Authorization: Bearer JWT_TOKEN`
+- **Query Parameters**: `projectId` (optional) - Filter tasks by project ID
+- **Response**:
+  ```json
+  {
+    "tasks": [
+      {
+        "id": "TASK_ID",
+        "title": "Task Title",
+        "description": "Task Description",
+        "status": "TODO",
+        "dueDate": "2025-06-01T00:00:00Z",
+        "assignee": {
+          "id": "USER_ID",
+          "name": "User Name"
+        }
+      }
+    ]
+  }
+  ```
+
+#### 2. Get Task by ID
+
+- **Endpoint**: `GET /api/tasks/:id`
+- **Description**: Get details for a specific task
+- **Headers**: `Authorization: Bearer JWT_TOKEN`
+- **Response**:
+  ```json
+  {
+    "id": "TASK_ID",
+    "title": "Task Title",
+    "description": "Task Description",
+    "status": "TODO",
+    "dueDate": "2025-06-01T00:00:00Z",
+    "projectId": "PROJECT_ID",
+    "assignee": {
+      "id": "USER_ID",
+      "name": "User Name"
+    },
+    "createdAt": "2025-05-18T10:20:42.771Z",
+    "updatedAt": "2025-05-18T10:20:42.771Z"
+  }
+  ```
+
+#### 3. Create Task
+
+- **Endpoint**: `POST /api/tasks`
+- **Description**: Create a new task
+- **Headers**: `Authorization: Bearer JWT_TOKEN`
+- **Request Body**:
+  ```json
+  {
+    "title": "Task Title",
+    "description": "Task Description",
+    "projectId": "PROJECT_ID",
+    "assigneeId": "USER_ID",
+    "status": "TODO",
+    "dueDate": "2025-06-01T00:00:00.000Z"
+  }
+  ```
+  Note: Status must be one of: "TODO", "IN_PROGRESS", or "DONE" (uppercase)
+- **Response**:
+  ```json
+  {
+    "id": "TASK_ID",
+    "title": "Task Title",
+    "description": "Task Description",
+    "status": "TODO",
+    "dueDate": "2025-06-01T00:00:00Z",
+    "projectId": "PROJECT_ID",
+    "assignee": {
+      "id": "USER_ID",
+      "name": "User Name"
+    },
+    "createdAt": "2025-05-18T10:20:42.771Z",
+    "updatedAt": "2025-05-18T10:20:42.771Z"
+  }
+  ```
+
+#### 4. Update Task
+
+- **Endpoint**: `PUT /api/tasks/:id`
+- **Description**: Update task information
+- **Headers**: `Authorization: Bearer JWT_TOKEN`
+- **Request Body**:
+  ```json
+  {
+    "title": "Updated Task Title",
+    "description": "Updated Task Description",
+    "projectId": "PROJECT_ID",
+    "assigneeId": "USER_ID",
+    "status": "IN_PROGRESS",
+    "dueDate": "2025-06-01T00:00:00.000Z"
+  }
+  ```
+- **Response**: Same as Get Task by ID, with updated values
+
+#### 5. Update Task Status
+
+- **Endpoint**: `PUT /api/tasks/:id`
+- **Description**: Update task status (use the main update endpoint)
+- **Headers**: `Authorization: Bearer JWT_TOKEN`
+- **Request Body**:
+  ```json
+  {
+    "title": "Task Title",
+    "description": "Task Description",
+    "projectId": "PROJECT_ID",
+    "assigneeId": "USER_ID",
+    "status": "IN_PROGRESS",
+    "dueDate": "2025-06-01T00:00:00.000Z"
+  }
+  ```
+- **Response**: Same as Update Task
+
+#### 6. Delete Task
+
+- **Endpoint**: `DELETE /api/tasks/:id`
+- **Description**: Delete a task
+- **Headers**: `Authorization: Bearer JWT_TOKEN`
+- **Response**:
+  ```json
+  {
+    "message": "Task deleted successfully",
+    "success": true
+  }
+  ```
+
+## Example Frontend Integration
+
+### Authentication
+
+```javascript
+// Login example
+async function login(email, password) {
+  try {
+    const response = await fetch('https://prod-management-api-2zoi.encr.app/api/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
+    const data = await response.json();
+    
+    if (response.ok) {
+      // Store token in localStorage or secure cookie
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('refreshToken', data.refreshToken);
+      localStorage.setItem('userId', data.user.id);
+      return data.user;
+    } else {
+      throw new Error(data.message || 'Login failed');
+    }
+  } catch (error) {
+    console.error('Login error:', error);
+    throw error;
+  }
+}
+
+// Get current user example
+async function getCurrentUser() {
+  try {
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
+    
+    if (!token || !userId) {
+      throw new Error('Not authenticated');
+    }
+    
+    const response = await fetch(`https://prod-management-api-2zoi.encr.app/api/auth/me?userId=${userId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    
+    const data = await response.json();
+    
+    if (response.ok) {
+      return data;
+    } else {
+      throw new Error(data.message || 'Failed to get user data');
+    }
+  } catch (error) {
+    console.error('Get current user error:', error);
+    throw error;
+  }
+}
 ```
 
-## Run app locally
+### Projects Management
 
-Before running your application, make sure you have Docker installed and running. Then run this command from your application's root folder:
+```javascript
+// Get all projects example
+async function getAllProjects() {
+  try {
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    
+    const response = await fetch('https://prod-management-api-2zoi.encr.app/api/projects', {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    
+    const data = await response.json();
+    
+    if (response.ok) {
+      return data.projects;
+    } else {
+      throw new Error(data.message || 'Failed to fetch projects');
+    }
+  } catch (error) {
+    console.error('Get projects error:', error);
+    throw error;
+  }
+}
 
-```bash
-encore run
+// Create project example
+async function createProject(projectData) {
+  try {
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    
+    const response = await fetch('https://prod-management-api-2zoi.encr.app/api/projects', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(projectData),
+    });
+    
+    const data = await response.json();
+    
+    if (response.ok) {
+      return data;
+    } else {
+      throw new Error(data.message || 'Failed to create project');
+    }
+  } catch (error) {
+    console.error('Create project error:', error);
+    throw error;
+  }
+}
 ```
 
-## Using the API
+### Tasks Management
 
-### url.shorten — Shortens a URL and adds it to the database
+```javascript
+// Get tasks for a project example
+async function getProjectTasks(projectId) {
+  try {
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    
+    const response = await fetch(`https://prod-management-api-2zoi.encr.app/api/projects/${projectId}/tasks`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    
+    const data = await response.json();
+    
+    if (response.ok) {
+      return data.tasks;
+    } else {
+      throw new Error(data.message || 'Failed to fetch tasks');
+    }
+  } catch (error) {
+    console.error('Get tasks error:', error);
+    throw error;
+  }
+}
 
-```bash
-curl 'http://127.0.0.1:4000/url' -d '{"url":"https://google.com"}'
+// Create task example
+async function createTask(taskData) {
+  try {
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    
+    const response = await fetch('https://prod-management-api-2zoi.encr.app/api/tasks', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(taskData),
+    });
+    
+    const data = await response.json();
+    
+    if (response.ok) {
+      return data;
+    } else {
+      throw new Error(data.message || 'Failed to create task');
+    }
+  } catch (error) {
+    console.error('Create task error:', error);
+    throw error;
+  }
+}
+
+// Update task status example
+async function updateTaskStatus(taskId, task) {
+  try {
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    
+    const response = await fetch(`https://prod-management-api-2zoi.encr.app/api/tasks/${taskId}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(task),
+    });
+    
+    const data = await response.json();
+    
+    if (response.ok) {
+      return data;
+    } else {
+      throw new Error(data.message || 'Failed to update task status');
+    }
+  } catch (error) {
+    console.error('Update task status error:', error);
+    throw error;
+  }
+}
 ```
 
-### url.get — Gets a URL from the database using a short ID
+## Important Notes
 
-```bash
-curl 'http://127.0.0.1:4000/url/:id'
-```
-
-### url.list — Lists all shortened URLs
-
-```bash
-curl 'http://127.0.0.1:4000/url'
-```
-
-## Open the developer dashboard
-
-While `encore run` is running, open [http://localhost:9400](http://localhost:9400) to access Encore's [local developer dashboard](https://encore.dev/docs/ts/observability/dev-dash).
-
-Here you can see API docs, make requests in the API explorer, and view traces of the responses.
-
-## Using the API
-
-To see that your app is running, you can ping the API to shorten a url.
-
-```bash
-curl 'http://localhost:4000/url' -d '{"url":"https://news.ycombinator.com"}'
-```
-
-When you ping the API, you will see traces and logs appearing in the local development dashboard: [http://localhost:9400](http://localhost:9400)
-
-## Connecting to databases
-
-You can connect to your databases via psql shell:
-
-```bash
-encore db shell <database-name> --env=local --superuser
-```
-
-Learn more in the [CLI docs](https://encore.dev/docs/ts/cli/cli-reference#database-management).
-
-## Deployment
-
-### Self-hosting
-
-See the [self-hosting instructions](https://encore.dev/docs/ts/self-host/build) for how to use `encore build docker` to create a Docker image and configure it.
-
-### Encore Cloud Platform
-
-Deploy your application to a free staging environment in Encore's development cloud using `git push encore`:
-
-```bash
-git add -A .
-git commit -m 'Commit message'
-git push encore
-```
-
-You can also open your app in the [Cloud Dashboard](https://app.encore.dev) to integrate with GitHub, or connect your AWS/GCP account, enabling Encore to automatically handle cloud deployments for you.
-
-## Link to GitHub
-
-Follow these steps to link your app to GitHub:
-
-1. Create a GitHub repo, commit and push the app.
-2. Open your app in the [Cloud Dashboard](https://app.encore.dev).
-3. Go to **Settings ➔ GitHub** and click on **Link app to GitHub** to link your app to GitHub and select the repo you just created.
-4. To configure Encore to automatically trigger deploys when you push to a specific branch name, go to the **Overview** page for your intended environment. Click on **Settings** and then in the section **Branch Push** configure the **Branch name** and hit **Save**.
-5. Commit and push a change to GitHub to trigger a deploy.
-
-[Learn more in the docs](https://encore.dev/docs/platform/integrations/github)
-
-## Testing
-
-To run tests, configure the `test` command in your `package.json` to the test runner of your choice, and then use the command `encore test` from the CLI. The `encore test` command sets up all the necessary infrastructure in test mode before handing over to the test runner. [Learn more](https://encore.dev/docs/ts/develop/testing)
-
-```bash
-encore test
-```
+1. The API requires authentication for most endpoints using JWT tokens.
+2. Always include the token in the Authorization header as `Bearer TOKEN`.
+3. When updating task status, use the main PUT endpoint as the specific PATCH endpoint has issues.
+4. Task status values must be capitalized: "TODO", "IN_PROGRESS", or "DONE".
+5. The avatar update endpoint requires the field to be named `avatarBase64` (not `avatar`).
