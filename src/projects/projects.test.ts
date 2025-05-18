@@ -12,9 +12,8 @@ import {
 } from "./projects";
 import { SQLDatabase } from "encore.dev/storage/sqldb";
 
-// Create test database connections without migration config
-const authDb = new SQLDatabase("biwoco_auth_db");
-const projectsDb = new SQLDatabase("biwoco_projects_db");
+// Create test database connections using SQLDatabase.named()
+const authDb = SQLDatabase.named("auth_db");
 
 describe("Projects Service Tests", () => {
   const testProject = {
@@ -60,19 +59,19 @@ describe("Projects Service Tests", () => {
     try {
       if (projectId) {
         try {
-          await projectsDb.exec`DELETE FROM project_members WHERE project_id = ${projectId}`;
+          await authDb.exec`DELETE FROM project_members WHERE project_id = ${projectId}`;
         } catch (error) {
           console.error("Cleanup project members error:", error);
         }
         
         try {
-          await projectsDb.exec`DELETE FROM tasks WHERE project_id = ${projectId}`;
+          await authDb.exec`DELETE FROM tasks WHERE project_id = ${projectId}`;
         } catch (error) {
           console.error("Cleanup tasks error:", error);
         }
         
         try {
-          await projectsDb.exec`DELETE FROM projects WHERE id = ${projectId}`;
+          await authDb.exec`DELETE FROM projects WHERE id = ${projectId}`;
         } catch (error) {
           console.error("Cleanup projects error:", error);
         }

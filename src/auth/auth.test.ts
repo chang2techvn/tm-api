@@ -2,8 +2,8 @@ import { describe, expect, test, beforeAll, afterAll } from "vitest";
 import { login, signup, getCurrentUser, refreshToken, logout } from "./auth";
 import { SQLDatabase } from "encore.dev/storage/sqldb";
 
-// Create a test database connection
-const db = new SQLDatabase("biwoco_auth_db");
+// Create a test database connection using SQLDatabase.named()
+const db = SQLDatabase.named("auth_db");
 
 describe("Authentication Tests", () => {
   const testUser = {
